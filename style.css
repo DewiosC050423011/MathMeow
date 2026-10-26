@@ -16,7 +16,7 @@ body {
 
 /* THEMES */
 body.light-mode .game-container { background: #fdfbf7; color: #2d3748; border-color: #ff7675; }
-body.light-mode .quiz-container, body.light-mode .stats-card, body.light-mode .card-choice, body.light-mode .shop-item, body.light-mode .level-card, body.light-mode .bottom-dash-panel { background: white; color: #2d3436; }
+body.light-mode .quiz-container, body.light-mode .stats-card, body.light-mode .card-choice, body.light-mode .shop-item, body.light-mode .level-card, body.light-mode .bottom-dash-panel, body.light-mode .achievement-list-box { background: white; color: #2d3436; }
 body.light-mode .screen { background: #f1f2f6; }
 
 body.dark-mode .game-container { background: #1e272e; color: #f1f2f6; border-color: #ffa502; }
@@ -25,7 +25,7 @@ body.dark-mode .nav-tabs { background: #353b48; border-color: #718093; }
 body.dark-mode .nav-btn { color: #dcdde1; }
 body.dark-mode .nav-btn.active { color: #ffa502; background: #1e272e; border-bottom: 4px solid #ffa502; }
 body.dark-mode .screen { background: #2f3640; }
-body.dark-mode .quiz-container, body.dark-mode .stats-card, body.dark-mode .card-choice, body.dark-mode .shop-item, body.dark-mode .level-card, body.dark-mode .bottom-dash-panel { background: #353b48; color: #f1f2f6; border-color: #718093; }
+body.dark-mode .quiz-container, body.dark-mode .stats-card, body.dark-mode .card-choice, body.dark-mode .shop-item, body.dark-mode .level-card, body.dark-mode .bottom-dash-panel, body.dark-mode .achievement-list-box { background: #353b48; color: #f1f2f6; border-color: #718093; }
 body.dark-mode .math-question-box { background: #718093; color: white; }
 body.dark-mode .math-opt-btn { background: #2f3640; color: white; border-color: #718093; }
 body.dark-mode .modal-box { background: #2f3640; color: white; border-color: #718093; }
@@ -43,16 +43,61 @@ body.dark-mode .modal-box { background: #2f3640; color: white; border-color: #71
     box-shadow: 0 20px 40px rgba(0,0,0,0.6); position: relative; overflow: hidden;
 }
 .landing-preview-arena {
-    height: 110px; border-radius: 12px; border: 3px solid #2d3436;
+    height: 140px; border-radius: 12px; border: 3px solid #2d3436;
     position: relative; overflow: hidden; margin-bottom: 12px;
 }
 .landing-cat-real {
-    position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+    position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
     z-index: 10; animation: bounceCat 1s infinite alternate ease-in-out;
 }
 @keyframes bounceCat {
     0% { transform: translateX(-50%) translateY(0); }
     100% { transform: translateX(-50%) translateY(-6px); }
+}
+
+/* BUBBLE CHAT TETAP MENGHADAP KANAN MESKI KUCING DIBALIK */
+.cat-speech-bubble {
+    position: absolute; background: #fff; border: 2px solid #2d3436; border-radius: 10px;
+    padding: 6px 10px; font-size: 8px; font-weight: 900; color: #2d3436;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2); white-space: nowrap; z-index: 50;
+    opacity: 0; transform: scale(0.9); transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.cat-speech-bubble.landing-bubble {
+    opacity: 1; transform: scale(1);
+    top: 6px; left: 70px;
+}
+.cat-speech-bubble.landing-bubble::before {
+    content: ''; position: absolute; left: -6px; top: 50%; transform: translateY(-50%);
+    border-width: 5px 6px 5px 0; border-style: solid; border-color: transparent #2d3436 transparent transparent;
+}
+.cat-speech-bubble.landing-bubble::after {
+    content: ''; position: absolute; left: -4px; top: 50%; transform: translateY(-50%);
+    border-width: 4px 5px 4px 0; border-style: solid; border-color: transparent #fff transparent transparent;
+}
+
+.cat-speech-bubble.in-game {
+    top: 6px; left: 66px; font-size: 8px;
+    background: #ffeaa7; color: #d35400; border-color: #d35400; width: 170px;
+    white-space: normal; text-align: left; line-height: 1.2;
+}
+.cat-speech-bubble.in-game::before {
+    content: ''; position: absolute; left: -6px; top: 50%; transform: translateY(-50%);
+    border-width: 5px 6px 5px 0; border-style: solid; border-color: transparent #d35400 transparent transparent;
+}
+.cat-speech-bubble.in-game::after {
+    content: ''; position: absolute; left: -4px; top: 50%; transform: translateY(-50%);
+    border-width: 4px 5px 4px 0; border-style: solid; border-color: transparent #ffeaa7 transparent transparent;
+}
+
+/* ANIMASI IKAN JATUH */
+.falling-fish {
+    position: absolute; top: -20px; left: 50%; font-size: 20px; z-index: 100;
+    animation: fallFishAni 0.8s ease-in forwards; pointer-events: none;
+}
+@keyframes fallFishAni {
+    0% { top: -20px; transform: translateX(-50%) rotate(0deg) scale(0.5); opacity: 0; }
+    50% { opacity: 1; transform: translateX(-50%) rotate(180deg) scale(1.2); }
+    100% { top: 110px; transform: translateX(-50%) rotate(360deg) scale(1); opacity: 1; }
 }
 
 .landing-title { font-size: 18px; font-weight: 900; color: #d63031; margin-bottom: 2px; }
@@ -139,7 +184,7 @@ header {
     background-size: 100% 4px; z-index: 50; pointer-events: none; opacity: 0.5;
 }
 
-.play-arena { height: 125px; position: relative; overflow: hidden; transition: background 0.5s; }
+.play-arena { height: 155px; position: relative; overflow: hidden; transition: background 0.5s; }
 .nature-sky { position: absolute; top: 0; left: 0; width: 100%; height: 75%; z-index: 1; }
 .nature-sun-moon { position: absolute; top: 6px; right: 12px; font-size: 18px; z-index: 2; animation: floatSun 4s infinite alternate ease-in-out; }
 @keyframes floatSun { 0% { transform: translateY(0); } 100% { transform: translateY(-4px); } }
@@ -154,13 +199,13 @@ header {
 @keyframes cloudMove2 { 0% { transform: translateX(-50px); } 100% { transform: translateX(300px); } }
 
 .pixel-mountain-back {
-    position: absolute; bottom: 30px; left: 0; width: 100%; height: 40px;
+    position: absolute; bottom: 30px; left: 0; width: 100%; height: 50px;
     background: #4b6584;
     clip-path: polygon(0% 100%, 18% 25%, 40% 85%, 65% 15%, 85% 75%, 100% 40%, 100% 100%);
     z-index: 2;
 }
 .pixel-mountain-front {
-    position: absolute; bottom: 18px; left: 0; width: 100%; height: 32px;
+    position: absolute; bottom: 18px; left: 0; width: 100%; height: 38px;
     background: #2f3640;
     clip-path: polygon(0% 100%, 12% 45%, 32% 90%, 55% 10%, 78% 80%, 100% 35%, 100% 100%);
     z-index: 3;
@@ -206,6 +251,7 @@ header {
 .pixel-cat-avatar {
     width: 56px; height: 52px; border-radius: 12px; position: relative;
     box-shadow: inset -3px -3px 0px rgba(0,0,0,0.15), 0 4px 8px rgba(0,0,0,0.2); z-index: 5;
+    cursor: pointer;
 }
 .pixel-cat-avatar.white { background: #fff; border: 3px solid #2d3436; }
 .pixel-cat-avatar.black { background: #2d3436; border: 3px solid #636e72; }
@@ -221,7 +267,7 @@ header {
 .cat-whiskers { position: absolute; top: 16px; width: 8px; height: 2px; background: #2d3436; }
 .cat-whiskers.left { left: -6px; } .cat-whiskers.right { right: -6px; }
 
-/* EKSPRESI WAJAH KUCING JELAS DI DALAM TV SCREEN */
+/* EKSPRESI WAJAH KUCING */
 .cat-face-8bit {
     position: absolute; top: 12px; width: 100%; display: flex; justify-content: center; gap: 8px; align-items: center;
 }
@@ -267,7 +313,7 @@ header {
     border-radius: 4px; border: 2px solid #2d3436; color: #2d3436; z-index: 60;
 }
 
-/* TV Control Panel & Mini HP/EXP Bar */
+/* TV Control Panel */
 .tv-control-panel {
     display: flex; justify-content: space-between; align-items: center; padding: 4px 6px 0 6px; gap: 6px;
 }
@@ -288,17 +334,18 @@ header {
 }
 .dash-item { display: flex; align-items: center; gap: 4px; }
 
-/* QUIZ SPECIAL ACTIONS (DIPISAH DARI PILIHAN JAWABAN) */
+/* QUIZ SPECIAL ACTIONS */
 .quiz-special-actions {
-    display: flex; gap: 6px; margin-top: 4px;
+    display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap;
 }
 .special-action-btn {
-    flex: 1; border: 2px solid #2d3436; border-radius: 6px; padding: 7px 4px;
-    font-size: 9px; font-weight: 900; cursor: pointer; box-shadow: 0 2px 0px #2d3436;
-    transition: 0.05s;
+    flex: 1; min-width: 22%; border: 2px solid #2d3436; border-radius: 6px; padding: 7px 2px;
+    font-size: 8px; font-weight: 900; cursor: pointer; box-shadow: 0 2px 0px #2d3436;
+    transition: 0.05s; white-space: nowrap;
 }
 .special-action-btn:active { transform: translateY(2px); box-shadow: none; }
 .special-action-btn.hint { background: #ffeaa7; color: #d35400; }
+.special-action-btn.feed { background: #55efc4; color: #006266; }
 .special-action-btn.skip-q { background: #fab1a0; color: #c0392b; }
 .special-action-btn.skip-s { background: #74b9ff; color: #2980b9; }
 
@@ -372,10 +419,21 @@ header {
 .rarity-legendary { background: #e17055; }
 
 .stats-card {
-    border: 3px solid #2d3436; border-radius: 12px; padding: 16px; background: white;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 10px;
+    border: 3px solid #2d3436; border-radius: 12px; padding: 14px; background: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 8px;
 }
-.stat-row { display: flex; justify-content: space-between; font-size: 12px; font-weight: 900; border-bottom: 2px dashed #dfe6e9; padding-bottom: 6px; }
+.stat-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 900; border-bottom: 2px dashed #dfe6e9; padding-bottom: 4px; }
+
+/* ACHIEVEMENT LIST BOX DI STATS */
+.achievement-list-box {
+    display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto;
+    border: 3px solid #2d3436; border-radius: 10px; padding: 8px; background: white;
+}
+.achievement-row {
+    display: flex; align-items: center; gap: 8px; padding: 6px; border-radius: 6px; border: 2px solid #dfe6e9; background: #fdfbf7; font-size: 9px;
+}
+.achievement-row.unlocked { border-color: #00b894; background: #e8f8f5; }
+.achievement-row .ach-icon-box { font-size: 16px; }
 
 /* MODAL */
 .modal-overlay {

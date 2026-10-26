@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MathMeow 8-Bit RPG 🐾⛰️</title>
-    <!-- Google Fonts untuk Tampilan Elegan & Nyaman di Mata -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -21,6 +20,9 @@
             <div class="pixel-mountain-front"></div>
             
             <div class="landing-cat-real">
+                <div class="cat-speech-bubble landing-bubble" id="landing-bubble-chat">
+                    Hai babu, aku Mochi! Siap nemenin kamu? 🐾
+                </div>
                 <div class="pixel-cat-avatar white" id="landing-cat-face">
                     <div class="cat-ear left"></div><div class="cat-ear right"></div>
                     <div class="cat-whiskers left"></div><div class="cat-whiskers right"></div>
@@ -41,14 +43,14 @@
 
         <div class="input-group">
             <label>Beri Nama Kucingmu:</label>
-            <input type="text" id="player-cat-name-input" placeholder="Contoh: Mochi" maxlength="12" value="Mochi">
+            <input type="text" id="player-cat-name-input" placeholder="Contoh: Mochi" maxlength="12" value="Mochi" oninput="updateLandingBubblePreview()">
         </div>
 
         <div class="input-group">
             <label>Panggil Player Sebagai:</label>
             <select id="landing-parent-role" class="landing-select">
-                <option value="Mom">👩‍🦰 Mom (Bunda)</option>
-                <option value="Dad">👨‍🦰 Dad (Ayah)</option>
+                <option value="Perempuan">👩 Perempuan</option>
+                <option value="Laki-laki">👨 Laki-laki</option>
             </select>
         </div>
 
@@ -108,7 +110,7 @@
         <audio id="bgm-audio" loop src="https://www.bensound.com/bensound-music/bensound-cute.mp3"></audio>
     </div>
 
-    <!-- Nav Tabs (Tanpa Setting karena sudah di Icon Header) -->
+    <!-- Nav Tabs -->
     <div class="nav-tabs">
         <button class="nav-btn active" onclick="switchTab('quiz')">🔢 Kuis</button>
         <button class="nav-btn" onclick="switchTab('stages')">🗺️ Peta Stage</button>
@@ -139,14 +141,23 @@
                     <div class="pixel-trees">🌲 🌳 🌲 🌳 🌲 🌳</div>
                     <div class="stage-shadow"></div>
                     
-                    <div class="pixel-cat-container" id="pixel-cat-container" style="left: 120px; top: 45px;">
+                    <!-- IKAN JATUH SAAT DIBERI MAKAN -->
+                    <div class="falling-fish" id="falling-fish" style="display:none;">🐟</div>
+
+                    <div class="pixel-cat-container" id="pixel-cat-container" style="left: 100px; top: 60px;">
+                        
+                        <!-- BUBBLE CHAT DI DALAM TV SCREEN -->
+                        <div class="cat-speech-bubble in-game" id="in-game-bubble">
+                            YEY babu jawabnya benar! ✨
+                        </div>
+
                         <div class="cat-aura-effect" id="cat-aura-effect">
                             <div class="aura-particle p1" id="ap-1">🌸</div>
                             <div class="aura-particle p2" id="ap-2">🌸</div>
                             <div class="aura-particle p3" id="ap-3">🌸</div>
                         </div>
 
-                        <div class="pixel-cat-avatar" id="pixel-cat">
+                        <div class="pixel-cat-avatar" id="pixel-cat" onclick="handleCatInteraction()" title="Klik kucing!">
                             <div class="cat-tail" id="cat-tail"></div>
                             <div class="cat-ear left"></div>
                             <div class="cat-ear right"></div>
@@ -155,7 +166,6 @@
                             
                             <div class="acc-slot head" id="acc-head"></div>
                             
-                            <!-- WAJAH & EKSPRESI DI DALAM TV SCREEN -->
                             <div class="cat-face-8bit normal" id="cat-face-expression">
                                 <div class="eye left-eye"></div>
                                 <div class="nose"></div>
@@ -177,8 +187,7 @@
                     </div>
 
                     <div class="active-buff-badge" id="active-buff-badge">✨ Buff Aktif</div>
-                    <!-- PANGGILAN MOM / DAD DI DALAM TV SCREEN -->
-                    <div class="cat-name-banner" id="main-cat-name">Mochi (Lv.1) • Mom</div>
+                    <div class="cat-name-banner" id="main-cat-name">Mochi (Lv.1) • Babu</div>
                 </div>
             </div>
 
@@ -219,11 +228,12 @@
                 <div class="dash-item">⭐ Bintang: <span id="dash-stars">0</span></div>
             </div>
 
-            <!-- TOMBOL AKSI KHUSUS (DIJAUHKAN DARI OPSI JAWABAN & TERPISAH) -->
+            <!-- TOMBOL AKSI KHUSUS (DITAMBAH TOMBOL KASIH MAKAN) -->
             <div class="quiz-special-actions">
                 <button class="special-action-btn hint" onclick="useHint()">💡 Hint (<span id="hint-count">3</span>)</button>
-                <button class="special-action-btn skip-q" onclick="skipQuestion()">⏭️ Skip Soal (15🪙)</button>
-                <button class="special-action-btn skip-s" onclick="skipStage()">⏩ Skip Stage (30🪙)</button>
+                <button class="special-action-btn feed" onclick="feedCat()" style="background:#55efc4; color:#006266;">🐟 Beri Makan</button>
+                <button class="special-action-btn skip-q" onclick="skipQuestion()">⏭️ Skip (15🪙)</button>
+                <button class="special-action-btn skip-s" onclick="skipStage()">⏩ Stage (30🪙)</button>
             </div>
         </div>
     </div>
@@ -249,7 +259,7 @@
         <div class="shop-list" id="shop-list"></div>
     </div>
 
-    <!-- 5. STATISTICS SCREEN -->
+    <!-- 5. STATISTICS SCREEN (DENGAN LIST DAFTAR ACHIEVEMENT) -->
     <div id="screen-stats" class="screen">
         <div class="section-title">Statistik Pemain (<span id="stats-cat-name">Karakter Aktif</span>)</div>
         <div class="stats-card">
@@ -258,6 +268,11 @@
             <div class="stat-row"><span>Jawaban Benar:</span> <strong id="stat-correct" style="color:#00b894;">0</strong></div>
             <div class="stat-row"><span>Jawaban Salah:</span> <strong id="stat-incorrect" style="color:#ff7675;">0</strong></div>
             <div class="stat-row"><span>Total Koin Didapat:</span> <strong id="stat-coins">0</strong></div>
+        </div>
+
+        <div class="section-title" style="margin-top: 10px;">🏆 Daftar Pencapaian (Achievement)</div>
+        <div class="achievement-list-box" id="achievement-list-container">
+            <!-- Di-render via JS -->
         </div>
     </div>
 </div>
@@ -277,7 +292,7 @@
     </div>
 </div>
 
-<!-- MODAL SETTINGS (DIBUAT POP-UP ELEGAN) -->
+<!-- MODAL SETTINGS -->
 <div class="modal-overlay" id="settings-modal">
     <div class="modal-box">
         <div style="font-size:28px; margin-bottom:4px;">⚙️</div>
@@ -300,7 +315,10 @@
                 <button class="modal-btn buy" style="padding: 4px 8px; font-size: 9px;" onclick="toggleThemeMode()" id="theme-mode-btn">🌙 Dark Mode</button>
             </div>
         </div>
-        <button class="modal-btn cancel" onclick="closeSettingsModal()">Tutup</button>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+            <button class="modal-btn" style="background:#fab1a0; color:#c0392b; font-size:10px; padding:8px;" onclick="returnToLandingPage()">🏠 Kembali ke Landing Page</button>
+            <button class="modal-btn cancel" onclick="closeSettingsModal()" style="font-size:10px; padding:8px;">Tutup</button>
+        </div>
     </div>
 </div>
 
@@ -319,9 +337,9 @@
 
 <!-- ACHIEVEMENT POPUP -->
 <div class="achievement-popup" id="achievement-popup">
-    <div class="ach-icon">🏆</div>
+    <div class="ach-icon" id="ach-icon-popup">🏆</div>
     <div>
-        <div style="font-size: 11px; font-weight: 900; color: #ffeaa7;">ACHIEVEMENT UNLOCKED!</div>
+        <div style="font-size: 11px; font-weight: 900; color: #ffeaa7;" id="ach-title-popup">ACHIEVEMENT UNLOCKED!</div>
         <div id="ach-text" style="font-size: 10px; color: white;">20 Jawaban Benar Tercapai!</div>
     </div>
 </div>

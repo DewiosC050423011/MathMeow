@@ -1,7 +1,7 @@
 let gameState = {
-    coins: 0, // Koin awal 0 sesuai request
-    hints: 3, // Hint awal 3 gratis
-    parentRole: 'Mom', // Mom atau Dad
+    coins: 0,
+    hints: 3,
+    parentRole: 'Perempuan',
     currentCat: 'white',
     selectedItemKey: null,
     darkMode: false,
@@ -64,7 +64,7 @@ let gameState = {
             desc: '🏆 Trofi Eksklusif Stage Bonus! Bukti penakluk matematika.'
         }
     },
-    catPosX: 120,
+    catPosX: 100,
     catDirection: 1,
     catWalkInterval: null,
     currentQuestion: null,
@@ -74,7 +74,19 @@ let gameState = {
     gameStarted: false,
     stageMistakes: 0,
     streakCount: 0,
-    totalStarsEarned: 0
+    totalStarsEarned: 0,
+    randomChatInterval: null,
+    catPokeCount: 0,
+    feedCount: 0,
+    
+    // MASTER LIST ACHIEVEMENT & STATUS UNLOCKED
+    achievementsMaster: [
+        { id: 'ach_10_correct', title: '🎯 Ahli Angka', desc: 'Capai 10 jawaban benar.', unlocked: false },
+        { id: 'ach_streak_5', title: '🔥 Streak Master', desc: 'Raih 5 jawaban beruntun tanpa salah.', unlocked: false },
+        { id: 'ach_stage_5', title: '🌟 Penakluk Bonus Stage', desc: 'Selesaikan Stage 5 dengan mulus.', unlocked: false },
+        { id: 'ach_poke_5', title: '😸 Sahabat Kucing', desc: 'Colok/interaksi kucing 5 kali di layar TV.', unlocked: false, secret: true },
+        { id: 'ach_feed_3', title: '🐟 Koki Ikan', desc: 'Beri makan kucing sebanyak 3 kali.', unlocked: false, secret: true }
+    ]
 };
 
 // --- REALTIME ENVIRONMENT ---
@@ -117,9 +129,17 @@ function initRealtimeEnvironment() {
 
     let landingSm = document.getElementById('landing-sun-moon');
     if(landingSm) landingSm.innerText = sunMoonIcon;
+    
+    updateLandingBubblePreview();
 }
 
-// --- KUCING JALAN PATROL ---
+function updateLandingBubblePreview() {
+    let name = document.getElementById('player-cat-name-input').value.trim() || 'Mochi';
+    let bubble = document.getElementById('landing-bubble-chat');
+    if(bubble) bubble.innerText = `Hai babu, aku ${name}! Siap nemenin kamu? 🐾`;
+}
+
+// --- KUCING JALAN PATROL & COUNTER BUBBLE ---
 function startCatWalking() {
     clearInterval(gameState.catWalkInterval);
     gameState.catWalkInterval = setInterval(() => {
@@ -129,14 +149,170 @@ function startCatWalking() {
         else if (gameState.catPosX < 20) gameState.catDirection = 1;
 
         let containerEl = document.getElementById('pixel-cat-container');
+        let bubbleEl = document.getElementById('in-game-bubble');
+        
         if (containerEl) {
             containerEl.style.left = gameState.catPosX + 'px';
-            containerEl.style.transform = gameState.catDirection === -1 ? 'scaleX(-1)' : 'scaleX(1)';
+            if (gameState.catDirection === -1) {
+                containerEl.style.transform = 'scaleX(-1)';
+                if(bubbleEl) bubbleEl.style.transform = 'scaleX(-1)';
+            } else {
+                containerEl.style.transform = 'scaleX(1)';
+                if(bubbleEl) bubbleEl.style.transform = 'scaleX(1)';
+            }
         }
     }, 80);
+
+    // SLANG GEN Z YAPPING RANDOM CHAT
+    clearInterval(gameState.randomChatInterval);
+    gameState.randomChatInterval = setInterval(() => {
+        if (!gameState.gameStarted || gameState.isPaused) return;
+        triggerRandomCatChat();
+    }, 12000);
 }
 
-// --- EKSPRESI KUCING DI DALAM TV SCREEN ---
+function triggerRandomCatChat() {
+    let catName = gameState.cats[gameState.currentCat].name.split(' ')[0];
+    let genzChats = [
+        `Anjay mabar, ${catName} & babu emang paling gaskeun! No cap 🧢`,
+        `Sumpah ya babu, soalnya agak skibidi rizz gini tapi kita santuy aja 💀`,
+        `Gile lu ndro, hoki banget ketemu babu sekeren lo. Real talk! ✨`,
+        `Spill dong tips jago matematika dong, biar gak malu-maluin wkwk 😭`,
+        `Aura magelang banget nih hoki lu babu, yapping mulu dari tadi 😂`,
+        `Anjay wangi bener ni game, vibes-nya aesthetic abis brotha! 💅`
+    ];
+    let randomMsg = genzChats[Math.floor(Math.random() * genzChats.length)];
+    showInGameBubble(randomMsg, 4000);
+}
+
+function showInGameBubble(text, duration = 3000) {
+    let bubble = document.getElementById('in-game-bubble');
+    if (!bubble) return;
+    bubble.innerText = text;
+    bubble.style.opacity = '1';
+
+    setTimeout(() => {
+        if(bubble) {
+            bubble.style.opacity = '0';
+        }
+    }, duration);
+}
+
+// --- FITUR KASIH MAKAN KUCING (BERI MAKAN 🐟) ---
+function feedCat() {
+    if (!gameState.gameStarted || gameState.isPaused) return;
+    playSound('click');
+
+    let fishEl = document.getElementById('falling-fish');
+    if (fishEl) {
+        fishEl.style.display = 'block';
+        // Reset animasi
+        fishEl.style.animation = 'none';
+        fishEl.offsetHeight; 
+        fishEl.style.animation = 'fallFishAni 0.8s ease-in forwards';
+    }
+
+    setTimeout(() => {
+        if(fishEl) fishEl.style.display = 'none';
+        playSound('correct');
+        showInGameBubble("Makasih yah babu! Nyam nyam enak bgt 🐟✨", 3000);
+        showFloatingText("+15 EXP", 200, 250, '#00b894');
+        
+        // Tambah EXP & Koin
+        let cat = gameState.cats[gameState.currentCat];
+        cat.exp += 15;
+        gameState.coins += 5;
+        gameState.feedCount++;
+
+        if (cat.exp >= cat.maxExp) {
+            cat.level++;
+            cat.exp = 0;
+            cat.maxExp = Math.floor(cat.maxExp * 1.25);
+            triggerAchievement(`HORE! ${cat.name.split(' ')[0]} Naik ke Level ${cat.level}! 🎉`, 'ach_10_correct'); // Atau level up
+        }
+
+        if (gameState.feedCount === 3) {
+            unlockAchievement('ach_feed_3');
+        }
+        updateUI();
+    }, 800);
+}
+
+// --- INTERAKSI KLIK KUCING DI SCREEN ---
+function handleCatInteraction() {
+    if(!gameState.gameStarted || gameState.isPaused) return;
+    gameState.catPokeCount++;
+    playSound('click');
+
+    let pokes = [
+        `Dih, babu suka banget nyolek-nyolek! Skibidi lo! 😾`,
+        `Gubrak! Jangan dikelitikin, lagi fokus ngitung nih brotha! 🐾`,
+        `Meow! Nyolek mulu, mana ikan gua?! 🐟`,
+        `Dih, lu bener-bener rizzeless ya suka colok mulu wkwk ~`
+    ];
+    let msg = pokes[Math.floor(Math.random() * pokes.length)];
+    showInGameBubble(msg, 3000);
+
+    if(gameState.catPokeCount === 5) {
+        unlockAchievement('ach_poke_5');
+    }
+}
+
+// --- SISTEM ACHIEVEMENT TERPADU & LIST ---
+function unlockAchievement(achId) {
+    let ach = gameState.achievementsMaster.find(a => a.id === achId);
+    if (ach && !ach.unlocked) {
+        ach.unlocked = true;
+        let icon = ach.secret ? "🔮" : "🏆";
+        let titlePrefix = ach.secret ? "SECRET ACHIEVEMENT!" : "ACHIEVEMENT UNLOCKED!";
+        triggerPopup(titlePrefix, `${ach.title}: ${ach.desc}`, icon);
+        renderAchievementList();
+    }
+}
+
+function triggerPopup(title, text, icon = "🏆") {
+    let popup = document.getElementById('achievement-popup');
+    document.getElementById('ach-title-popup').innerText = title;
+    document.getElementById('ach-icon-popup').innerText = icon;
+    document.getElementById('ach-text').innerText = text;
+    popup.classList.add('show');
+    setTimeout(() => popup.classList.remove('show'), 3800);
+}
+
+function renderAchievementList() {
+    let container = document.getElementById('achievement-list-container');
+    if (!container) return;
+    let html = '';
+    gameState.achievementsMaster.forEach(ach => {
+        let statusClass = ach.unlocked ? 'unlocked' : '';
+        let statusIcon = ach.unlocked ? '✅' : '🔒';
+        let secretTag = ach.secret ? ' <span style="color:#d63031; font-size:7px;">[SECRET]</span>' : '';
+        html += `<div class="achievement-row ${statusClass}">
+            <div class="ach-icon-box">${ach.unlocked ? '🏆' : '🔒'}</div>
+            <div style="flex:1;">
+                <div style="font-weight:900;">${ach.title} ${secretTag}</div>
+                <div style="font-size:8px; opacity:0.8;">${ach.desc}</div>
+            </div>
+            <div>${statusIcon}</div>
+        </div>`;
+    });
+    container.innerHTML = html;
+}
+
+// --- KEMBALI KE LANDING PAGE ---
+function returnToLandingPage() {
+    playSound('click');
+    closeSettingsModal();
+    gameState.gameStarted = false;
+    clearInterval(gameState.timerInterval);
+    clearInterval(gameState.catWalkInterval);
+    clearInterval(gameState.randomChatInterval);
+    
+    let landing = document.getElementById('landing-page');
+    if(landing) landing.style.display = 'flex';
+}
+
+// --- EKSPRESI KUCING ---
 function setCatExpression(exp) {
     let faceBox = document.getElementById('cat-face-expression');
     if (!faceBox) return;
@@ -205,6 +381,7 @@ function selectLandingCat(catKey, el) {
 
     let landingCatFace = document.getElementById('landing-cat-face');
     if(landingCatFace) landingCatFace.className = "pixel-cat-avatar " + catKey;
+    updateLandingBubblePreview();
 }
 
 function startGameFromLanding() {
@@ -217,13 +394,20 @@ function startGameFromLanding() {
     gameState.difficulty = document.getElementById('landing-difficulty').value;
     gameState.gameStarted = true;
     gameState.isPaused = false;
+    gameState.catPokeCount = 0;
+    gameState.feedCount = 0;
     
     let landing = document.getElementById('landing-page');
     if(landing) landing.style.display = 'none';
 
     updateUI();
+    renderAchievementList();
     startCatWalking();
     generateQuestion();
+    
+    setTimeout(() => {
+        showInGameBubble(`Hai babu! Yuk gaskeun bantu aku jawab soal matematika ya! ✨`, 3500);
+    }, 1000);
 }
 
 // --- MUSIC PLAYER ---
@@ -321,7 +505,7 @@ function showFloatingText(text, x, y, color = '#ffeaa7') {
     setTimeout(() => el.remove(), 700);
 }
 
-// --- SWITCH TAB DENGAN AUTO-PAUSE ---
+// --- SWITCH TAB ---
 function switchTab(tabName) {
     playSound('click');
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -340,7 +524,10 @@ function switchTab(tabName) {
     if(tabName === 'stages') renderStageMap();
     if(tabName === 'wardrobe') renderWardrobe();
     if(tabName === 'shop') renderShop();
-    if(tabName === 'stats') renderStats();
+    if(tabName === 'stats') {
+        renderStats();
+        renderAchievementList();
+    }
 }
 
 // --- GENERATOR SOAL ---
@@ -407,7 +594,9 @@ function generateQuestion() {
 
     gameState.currentQuestion = { q: qText, ans: ans, options: options };
     
-    let baseTime = (diff === 'hard') ? 20 : 30;
+    let isBonus = (cat.stage % 5 === 0);
+    let baseTime = isBonus ? 15 : 30;
+    
     let auraKey = cat.equippedAcc.aura;
     if (auraKey === 'aura_star') baseTime += 5;
 
@@ -420,7 +609,7 @@ function renderQuizUI() {
     let cat = gameState.cats[gameState.currentCat];
     let isBonus = (cat.stage % 5 === 0);
     
-    let stageTitle = isBonus ? `⭐ BONUS STAGE ${cat.stage}` : `Stage ${cat.stage}`;
+    let stageTitle = isBonus ? `⭐ BONUS STAGE ${cat.stage} (Fast 15s!)` : `Stage ${cat.stage}`;
     document.getElementById('stage-info').innerText = `${stageTitle} (Soal ${cat.qIndex}/3)`;
     document.getElementById('math-question').innerText = gameState.currentQuestion.q;
 
@@ -456,10 +645,10 @@ function startTimer() {
             gameState.stageMistakes++;
             gameState.streakCount = 0;
             setCatExpression('sad');
+            showInGameBubble(`Waktu habis! Hati-hati babu.`, 3000);
             playSound('wrong');
             triggerVibration(250);
             
-            // Waktu habis = langsung lanjut ke soal berikutnya (tidak ulang soal)
             advanceQuizProgression();
         }
     }, 1000);
@@ -471,17 +660,17 @@ function useHint() {
         gameState.hints--;
         playSound('click');
         let correctAns = gameState.currentQuestion.ans;
-        alert(`💡 Petunjuk: Salah satu pilihan yang SALAH telah disembunyikan atau ingat bahwa jawabannya berkisar di sekitar angka ${correctAns + (Math.random() > 0.5 ? 1 : -1)} / ${correctAns}!`);
+        showInGameBubble(`Hint: Jawabannya sekitar ${correctAns}!`, 3000);
         updateUI();
     } else {
         if (gameState.coins >= 10) {
             gameState.coins -= 10;
             gameState.hints++;
             playSound('coin');
-            alert('Berhasil membeli 1 Hint seharga 10 Koin!');
+            showInGameBubble('Berhasil beli 1 Hint!', 2500);
             useHint();
         } else {
-            alert('Hint habis dan koin kurang (Butuh 10 koin untuk beli hint)!');
+            showInGameBubble('Hint habis & koin kurang (Butuh 10 koin)!', 3000);
         }
     }
 }
@@ -500,6 +689,11 @@ function checkAnswer(selected) {
         gameState.streakCount++;
         setCatExpression('normal');
 
+        showInGameBubble(`YEY babu jawabnya benar! ✨`, 3000);
+
+        if(cat.correct >= 10) unlockAchievement('ach_10_correct');
+        if(gameState.streakCount >= 5) unlockAchievement('ach_streak_5');
+
         if (cat.level < 30) {
             let baseExpGain = 25;
             ['exp_charm', 'exp_potion'].forEach(accKey => {
@@ -513,7 +707,7 @@ function checkAnswer(selected) {
                 cat.level++;
                 cat.exp = 0;
                 cat.maxExp = Math.floor(cat.maxExp * 1.25);
-                triggerAchievement(`HORE! ${cat.name.split(' ')[0]} Naik ke Level ${cat.level}! 🎉`);
+                triggerPopup("🎉 LEVEL UP!", `${cat.name.split(' ')[0]} Naik ke Level ${cat.level}!`, "🐱");
             }
         }
         
@@ -533,19 +727,18 @@ function checkAnswer(selected) {
 
         if (gameState.stageMistakes >= 3) {
             setCatExpression('sad');
+            showInGameBubble(`babu belajar lagi dah, next jawab yang bener! 😭`, 3500);
         } else {
             setCatExpression('angry');
+            showInGameBubble(`cailah salah, gapapa baru sekali ~ 😉`, 3500);
         }
     }
 
     advanceQuizProgression();
 }
 
-// --- GAMEPLAY LANJUT KE SOAL/LEVEL BERIKUTNYA MESKI SALAH ---
 function advanceQuizProgression() {
     let cat = gameState.cats[gameState.currentCat];
-    let isBonus = (cat.stage % 5 === 0);
-
     cat.qIndex++;
     if (cat.qIndex > 3) {
         let starsEarned = 3;
@@ -558,6 +751,10 @@ function advanceQuizProgression() {
             completed: true
         };
         gameState.totalStarsEarned += starsEarned;
+
+        if (cat.stage === 5) {
+            unlockAchievement('ach_stage_5');
+        }
 
         cat.stage++;
         cat.qIndex = 1;
@@ -604,7 +801,7 @@ function renderStageMap() {
 
 function selectStage(stageNum, isUnlocked) {
     if (!isUnlocked) {
-        alert('Stage ini masih terkunci! Selesaikan stage sebelumnya terlebih dahulu.');
+        showInGameBubble('Stage ini masih terkunci!', 2500);
         return;
     }
     playSound('click');
@@ -623,7 +820,7 @@ function skipQuestion() {
         updateUI();
         advanceQuizProgression();
     } else {
-        alert('Koin tidak cukup untuk skip soal (Butuh 15 koin).');
+        showInGameBubble('Koin kurang untuk skip soal (Butuh 15 koin).', 2500);
     }
 }
 
@@ -639,15 +836,8 @@ function skipStage() {
         updateUI();
         generateQuestion();
     } else {
-        alert('Koin tidak cukup untuk skip stage (Butuh 30 koin).');
+        showInGameBubble('Koin kurang untuk skip stage (Butuh 30 koin).', 2500);
     }
-}
-
-function triggerAchievement(text) {
-    let popup = document.getElementById('achievement-popup');
-    document.getElementById('ach-text').innerText = text;
-    popup.classList.add('show');
-    setTimeout(() => popup.classList.remove('show'), 3500);
 }
 
 // --- UPDATE UI ---
@@ -659,7 +849,7 @@ function updateUI() {
     if(bodyEl) bodyEl.className = 'pixel-cat-avatar ' + cat.class;
 
     let nameBanner = document.getElementById('main-cat-name');
-    if(nameBanner) nameBanner.innerText = `${cat.name.split(' ')[0]} (Lv.${cat.level}) • ${gameState.parentRole}`;
+    if(nameBanner) nameBanner.innerText = `${cat.name.split(' ')[0]} (Lv.${cat.level}) • Babu`;
 
     let tvLv = document.getElementById('tv-cat-lv');
     let tvExpText = document.getElementById('tv-exp-text');
@@ -844,7 +1034,7 @@ function confirmPurchase() {
         closeModal();
         renderShop();
     } else {
-        alert('Koinmu belum cukup, Dew!');
+        showInGameBubble('Koinmu belum cukup, Dew!', 2500);
     }
 }
 
