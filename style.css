@@ -46,16 +46,23 @@ body.dark-mode .modal-box { background: #2f3640; color: white; border-color: #71
     height: 140px; border-radius: 12px; border: 3px solid #2d3436;
     position: relative; overflow: hidden; margin-bottom: 12px;
 }
+
+/* JAM ALA IPHONE LOCKSCREEN DI LANDING PAGE */
+.iphone-lock-clock {
+    position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+    font-size: 20px; font-weight: 900; color: #ffffff; text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+    letter-spacing: 1px; z-index: 25; font-family: 'Press Start 2P', monospace;
+}
+
 .landing-cat-real {
-    position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+    position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
     z-index: 10; animation: bounceCat 1s infinite alternate ease-in-out;
 }
 @keyframes bounceCat {
     0% { transform: translateX(-50%) translateY(0); }
-    100% { transform: translateX(-50%) translateY(-6px); }
+    100% { transform: translateX(-50%) translateY(-4px); }
 }
 
-/* BUBBLE CHAT TETAP MENGHADAP KANAN MESKI KUCING DIBALIK */
 .cat-speech-bubble {
     position: absolute; background: #fff; border: 2px solid #2d3436; border-radius: 10px;
     padding: 6px 10px; font-size: 8px; font-weight: 900; color: #2d3436;
@@ -64,15 +71,15 @@ body.dark-mode .modal-box { background: #2f3640; color: white; border-color: #71
 }
 .cat-speech-bubble.landing-bubble {
     opacity: 1; transform: scale(1);
-    top: 6px; left: 70px;
+    top: -32px; left: 50%; transform: translateX(-50%);
 }
 .cat-speech-bubble.landing-bubble::before {
-    content: ''; position: absolute; left: -6px; top: 50%; transform: translateY(-50%);
-    border-width: 5px 6px 5px 0; border-style: solid; border-color: transparent #2d3436 transparent transparent;
+    content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
+    border-width: 6px 5px 0 5px; border-style: solid; border-color: #2d3436 transparent transparent transparent;
 }
 .cat-speech-bubble.landing-bubble::after {
-    content: ''; position: absolute; left: -4px; top: 50%; transform: translateY(-50%);
-    border-width: 4px 5px 4px 0; border-style: solid; border-color: transparent #fff transparent transparent;
+    content: ''; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
+    border-width: 5px 4px 0 4px; border-style: solid; border-color: #fff transparent transparent transparent;
 }
 
 .cat-speech-bubble.in-game {
@@ -89,9 +96,8 @@ body.dark-mode .modal-box { background: #2f3640; color: white; border-color: #71
     border-width: 4px 5px 4px 0; border-style: solid; border-color: transparent #ffeaa7 transparent transparent;
 }
 
-/* ANIMASI IKAN JATUH */
 .falling-fish {
-    position: absolute; top: -20px; left: 50%; font-size: 20px; z-index: 100;
+    position: absolute; top: -20px; font-size: 20px; z-index: 100;
     animation: fallFishAni 0.8s ease-in forwards; pointer-events: none;
 }
 @keyframes fallFishAni {
@@ -161,7 +167,7 @@ header {
 .screen { flex: 1; display: none; flex-direction: column; padding: 10px; overflow-y: auto; background: #f1f2f6; gap: 8px; }
 .screen.active { display: flex; }
 
-/* TV FRAME RETRO */
+/* TV FRAME RETRO (PAS TIDAK KEPOTONG) */
 .tv-frame-container {
     background: #e17055; border: 4px solid #2d3436; border-radius: 16px;
     padding: 8px 8px 4px 8px; position: relative;
@@ -184,19 +190,17 @@ header {
     background-size: 100% 4px; z-index: 50; pointer-events: none; opacity: 0.5;
 }
 
-.play-arena { height: 155px; position: relative; overflow: hidden; transition: background 0.5s; }
+.play-arena { height: 145px; width: 100%; max-width: 100%; margin: 0 auto; position: relative; overflow: hidden; transition: background 0.5s; }
 .nature-sky { position: absolute; top: 0; left: 0; width: 100%; height: 75%; z-index: 1; }
-.nature-sun-moon { position: absolute; top: 6px; right: 12px; font-size: 18px; z-index: 2; animation: floatSun 4s infinite alternate ease-in-out; }
-@keyframes floatSun { 0% { transform: translateY(0); } 100% { transform: translateY(-4px); } }
 
 .pixel-cloud {
     position: absolute; background: white; border: 2px solid #2d3436; border-radius: 8px;
     box-shadow: inset -2px -2px 0px rgba(0,0,0,0.1); z-index: 2; opacity: 0.9;
 }
 .pixel-cloud.c1 { width: 35px; height: 12px; top: 8px; left: 10px; animation: cloudMove1 14s infinite linear; }
-.pixel-cloud.c2 { width: 50px; height: 14px; top: 20px; left: 150px; animation: cloudMove2 20s infinite linear; }
-@keyframes cloudMove1 { 0% { transform: translateX(-40px); } 100% { transform: translateX(340px); } }
-@keyframes cloudMove2 { 0% { transform: translateX(-50px); } 100% { transform: translateX(300px); } }
+.pixel-cloud.c2 { width: 50px; height: 14px; top: 20px; left: 220px; animation: cloudMove2 20s infinite linear; }
+@keyframes cloudMove1 { 0% { transform: translateX(-40px); } 100% { transform: translateX(380px); } }
+@keyframes cloudMove2 { 0% { transform: translateX(-50px); } 100% { transform: translateX(340px); } }
 
 .pixel-mountain-back {
     position: absolute; bottom: 30px; left: 0; width: 100%; height: 50px;
@@ -212,7 +216,7 @@ header {
 }
 .pixel-trees {
     position: absolute; bottom: 4px; width: 100%; font-size: 13px;
-    text-align: center; z-index: 4; letter-spacing: 7px; pointer-events: none;
+    text-align: center; z-index: 4; letter-spacing: 12px; pointer-events: none;
 }
 .stage-shadow {
     position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
@@ -220,7 +224,7 @@ header {
 }
 
 .pixel-cat-container {
-    position: absolute; width: 56px; height: 52px; z-index: 6; transition: transform 0.05s ease;
+    position: absolute; width: 56px; height: 52px; z-index: 6; transition: left 0.15s linear;
 }
 .cat-aura-effect {
     position: absolute; top: -16px; left: -16px; right: -16px; bottom: -16px;
@@ -259,15 +263,19 @@ header {
     background: linear-gradient(135deg, #fff 40%, #e17055 40%, #e17055 70%, #2d3748 70%); 
     border: 3px solid #2d3436;
 }
+
 .cat-ear {
     position: absolute; top: -10px; width: 12px; height: 12px; background: inherit; border: 2px solid #2d3436;
     clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    animation: earTwitch 2.5s infinite ease-in-out;
 }
-.cat-ear.left { left: 4px; } .cat-ear.right { right: 4px; }
+.cat-ear.left { left: 4px; } 
+.cat-ear.right { right: 4px; animation-delay: 0.5s; }
+@keyframes earTwitch { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-5deg); } }
+
 .cat-whiskers { position: absolute; top: 16px; width: 8px; height: 2px; background: #2d3436; }
 .cat-whiskers.left { left: -6px; } .cat-whiskers.right { right: -6px; }
 
-/* EKSPRESI WAJAH KUCING */
 .cat-face-8bit {
     position: absolute; top: 12px; width: 100%; display: flex; justify-content: center; gap: 8px; align-items: center;
 }
@@ -285,23 +293,33 @@ header {
 .cat-face-8bit.angry .left-eye { transform: translateY(1px) rotate(15deg); }
 .cat-face-8bit.angry .right-eye { transform: translateY(1px) rotate(-15deg); }
 .cat-face-8bit.angry .mouth { width: 10px; height: 3px; background: #2d3436; border: none; border-radius: 2px; bottom: -4px; }
-.cat-face-8bit.angry .tear-drop { display: none; }
 
 .cat-face-8bit.sad .eye { height: 3px; }
 .cat-face-8bit.sad .mouth { width: 8px; height: 4px; border-top: 3px solid #2d3436; border-bottom: none; border-radius: 6px 6px 0 0; bottom: -3px; }
 .cat-face-8bit.sad .tear-drop { display: block; }
 
-.cat-limbs .limb { position: absolute; background: inherit; border: 2px solid #2d3436; width: 8px; height: 8px; }
-.leg-l { bottom: -6px; left: 10px; border-radius: 0 0 4px 4px; }
-.leg-r { bottom: -6px; right: 10px; border-radius: 0 0 4px 4px; }
+.cat-limbs .limb { position: absolute; background: inherit; border: 2px solid #2d3436; width: 7px; height: 7px; }
+.leg-l { bottom: -6px; left: 10px; border-radius: 0 0 4px 4px; animation: legMoveL 0.3s infinite alternate ease-in-out; }
+.leg-r { bottom: -6px; right: 10px; border-radius: 0 0 4px 4px; animation: legMoveR 0.3s infinite alternate ease-in-out; }
 .arm-l { top: 20px; left: -6px; width: 5px; height: 7px; border-radius: 3px 0 0 3px; }
 .arm-r { top: 20px; right: -6px; width: 5px; height: 7px; border-radius: 0 3px 3px 0; }
+@keyframes legMoveL { 0% { transform: translateY(0); } 100% { transform: translateY(-3px); } }
+@keyframes legMoveR { 0% { transform: translateY(-3px); } 100% { transform: translateY(0); } }
+
 .cat-tail {
     position: absolute; right: -10px; bottom: 6px; width: 10px; height: 4px;
     background: inherit; border: 2px solid #2d3436; border-radius: 0 4px 4px 0;
-    transform-origin: left center; animation: tailWag 0.6s infinite alternate ease-in-out;
+    transform-origin: left center; animation: tailWag 0.5s infinite alternate ease-in-out;
 }
-@keyframes tailWag { 0% { transform: rotate(-15deg); } 100% { transform: rotate(25deg); } }
+@keyframes tailWag { 0% { transform: rotate(-20deg); } 100% { transform: rotate(30deg); } }
+
+.pixel-cat-avatar.waving .paw-wave {
+    position: absolute; top: 18px; width: 6px; height: 8px; background: inherit; border: 2px solid #2d3436; border-radius: 3px;
+    animation: catWave 0.6s infinite alternate ease-in-out; z-index: 15;
+}
+.pixel-cat-avatar.waving .paw-wave.left-paw { left: -7px; transform-origin: top right; }
+.pixel-cat-avatar.waving .paw-wave.right-paw { right: -7px; transform-origin: top left; animation-delay: 0.3s; }
+@keyframes catWave { 0% { transform: rotate(0deg); } 100% { transform: rotate(-35deg) translateY(-2px); } }
 
 .acc-slot { position: absolute; pointer-events: none; z-index: 10; }
 .acc-slot.head { top: -20px; left: 50%; transform: translateX(-50%); font-size: 22px; }
@@ -387,7 +405,21 @@ header {
     font-size: 13px; font-weight: 900; cursor: pointer; text-align: center;
     box-shadow: 0 3px 0px #2d3436; transition: 0.05s; background: #fdfbf7;
 }
-.math-opt-btn:active { transform: translateY(2px); box-shadow: none; background: #55efc4; }
+.math-opt-btn:active { transform: translateY(2px); box-shadow: none; }
+/* WARNA MERAH KETIKA SALAH */
+.math-opt-btn.wrong-flash {
+    background: #ff7675 !important;
+    color: white !important;
+    border-color: #d63031 !important;
+    animation: shakeWrong 0.2s ease-in-out;
+}
+@keyframes shakeWrong {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    50% { transform: translateX(4px); }
+    75% { transform: translateX(-4px); }
+    100% { transform: translateX(0); }
+}
 
 /* Floating Text */
 .floating-text {
@@ -396,7 +428,7 @@ header {
 }
 @keyframes floatUp8Bit { 0% { opacity: 1; transform: translateY(0) scale(0.8); } 100% { opacity: 0; transform: translateY(-35px) scale(1.2); } }
 
-/* Wardrobe & Shop & Stats */
+/* Wardrobe & Shop & Stats (TOMBOL BELI DI TOKO DISAMAKAN) */
 .section-title { font-size: 11px; font-weight: 900; margin-bottom: 6px; }
 .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
 .card-choice {
@@ -412,6 +444,13 @@ header {
     border: 3px solid #2d3436; box-shadow: 0 3px 0px #2d3436; cursor: pointer;
 }
 .shop-info { display: flex; align-items: center; gap: 10px; }
+.shop-item .buy-btn {
+    background: #00b894; color: white; border: 2px solid #2d3436; border-radius: 6px;
+    padding: 6px 12px; font-size: 9px; font-weight: 900; cursor: pointer;
+    box-shadow: 0 2px 0px #2d3436; transition: 0.05s;
+}
+.shop-item .buy-btn:active { transform: translateY(2px); box-shadow: none; }
+
 .rarity-tag { font-size: 8px; font-weight: 900; padding: 2px 6px; border-radius: 4px; color: white; display: inline-block; margin-top: 2px; }
 .rarity-common { background: #b2bec3; }
 .rarity-rare { background: #0984e3; }
@@ -424,7 +463,6 @@ header {
 }
 .stat-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 900; border-bottom: 2px dashed #dfe6e9; padding-bottom: 4px; }
 
-/* ACHIEVEMENT LIST BOX DI STATS */
 .achievement-list-box {
     display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto;
     border: 3px solid #2d3436; border-radius: 10px; padding: 8px; background: white;

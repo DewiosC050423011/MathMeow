@@ -1,5 +1,5 @@
 let gameState = {
-    coins: 0,
+    coins: 50,
     hints: 3,
     parentRole: 'Perempuan',
     currentCat: 'white',
@@ -64,7 +64,7 @@ let gameState = {
             desc: '🏆 Trofi Eksklusif Stage Bonus! Bukti penakluk matematika.'
         }
     },
-    catPosX: 100,
+    catPosX: 140,
     catDirection: 1,
     catWalkInterval: null,
     currentQuestion: null,
@@ -78,8 +78,8 @@ let gameState = {
     randomChatInterval: null,
     catPokeCount: 0,
     feedCount: 0,
+    isEating: false,
     
-    // MASTER LIST ACHIEVEMENT & STATUS UNLOCKED
     achievementsMaster: [
         { id: 'ach_10_correct', title: '🎯 Ahli Angka', desc: 'Capai 10 jawaban benar.', unlocked: false },
         { id: 'ach_streak_5', title: '🔥 Streak Master', desc: 'Raih 5 jawaban beruntun tanpa salah.', unlocked: false },
@@ -89,30 +89,32 @@ let gameState = {
     ]
 };
 
-// --- REALTIME ENVIRONMENT ---
+// --- REALTIME ENVIRONMENT (TANPA MATAHARI ANEH) ---
 function initRealtimeEnvironment() {
     let now = new Date();
     let hours = now.getHours();
+    let minutes = now.getMinutes();
+    let timeFormatted = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+    
+    // Set Jam iPhone di Landing Page
+    let lockClock = document.getElementById('iphone-lock-clock');
+    if(lockClock) lockClock.innerText = timeFormatted;
+
     let statusText = "";
     let skyGradient = "";
-    let sunMoonIcon = "☀️";
 
     if (hours >= 5 && hours < 11) {
-        statusText = `🌅 Pagi Hari (${hours}:00) - Suasana Pegunungan Cerah`;
+        statusText = `🌅 Pagi Hari (${timeFormatted}) - Suasana Pegunungan Cerah`;
         skyGradient = "linear-gradient(135deg, #74b9ff 0%, #81ecec 100%)";
-        sunMoonIcon = "☀️";
     } else if (hours >= 11 && hours < 15) {
-        statusText = `☀️ Siang Hari (${hours}:00) - Matahari Terik & Hutan Hijau`;
+        statusText = `☀️ Siang Hari (${timeFormatted}) - Matahari Terik & Hutan Hijau`;
         skyGradient = "linear-gradient(135deg, #0984e3 0%, #74b9ff 100%)";
-        sunMoonIcon = "🌞";
     } else if (hours >= 15 && hours < 18) {
-        statusText = `🌇 Sore Hari (${hours}:00) - Senja & Awan Jingga`;
+        statusText = `🌇 Sore Hari (${timeFormatted}) - Senja & Awan Jingga`;
         skyGradient = "linear-gradient(135deg, #ff7675 0%, #fab1a0 100%)";
-        sunMoonIcon = "🌇";
     } else {
-        statusText = `🌙 Malam Hari (${hours}:00) - Nuansa Malam Hutan Tenang`;
+        statusText = `🌙 Malam Hari (${timeFormatted}) - Nuansa Malam Hutan Tenang`;
         skyGradient = "linear-gradient(135deg, #2d3436 0%, #0f2027 100%)";
-        sunMoonIcon = "🌙";
     }
 
     let statusEl = document.getElementById('realtime-status');
@@ -123,12 +125,6 @@ function initRealtimeEnvironment() {
 
     let landingSky = document.getElementById('landing-sky-bg');
     if(landingSky) landingSky.style.background = skyGradient;
-
-    let smEl = document.getElementById('nature-sun-moon');
-    if(smEl) smEl.innerText = sunMoonIcon;
-
-    let landingSm = document.getElementById('landing-sun-moon');
-    if(landingSm) landingSm.innerText = sunMoonIcon;
     
     updateLandingBubblePreview();
 }
@@ -139,14 +135,14 @@ function updateLandingBubblePreview() {
     if(bubble) bubble.innerText = `Hai babu, aku ${name}! Siap nemenin kamu? 🐾`;
 }
 
-// --- KUCING JALAN PATROL & COUNTER BUBBLE ---
 function startCatWalking() {
     clearInterval(gameState.catWalkInterval);
     gameState.catWalkInterval = setInterval(() => {
-        if (!gameState.gameStarted || gameState.isPaused) return;
-        gameState.catPosX += (1.5 * gameState.catDirection);
-        if (gameState.catPosX > 260) gameState.catDirection = -1;
-        else if (gameState.catPosX < 20) gameState.catDirection = 1;
+        if (!gameState.gameStarted || gameState.isPaused || gameState.isEating) return;
+        
+        gameState.catPosX += (1.2 * gameState.catDirection);
+        if (gameState.catPosX > 240) gameState.catDirection = -1;
+        else if (gameState.catPosX < 40) gameState.catDirection = 1;
 
         let containerEl = document.getElementById('pixel-cat-container');
         let bubbleEl = document.getElementById('in-game-bubble');
@@ -163,10 +159,9 @@ function startCatWalking() {
         }
     }, 80);
 
-    // SLANG GEN Z YAPPING RANDOM CHAT
     clearInterval(gameState.randomChatInterval);
     gameState.randomChatInterval = setInterval(() => {
-        if (!gameState.gameStarted || gameState.isPaused) return;
+        if (!gameState.gameStarted || gameState.isPaused || gameState.isEating) return;
         triggerRandomCatChat();
     }, 12000);
 }
@@ -177,7 +172,7 @@ function triggerRandomCatChat() {
         `Anjay mabar, ${catName} & babu emang paling gaskeun! No cap 🧢`,
         `Sumpah ya babu, soalnya agak skibidi rizz gini tapi kita santuy aja 💀`,
         `Gile lu ndro, hoki banget ketemu babu sekeren lo. Real talk! ✨`,
-        `Spill dong tips jago matematika dong, biar gak malu-maluin wkwk 😭`,
+        `Spill dong tips jago matematika, biar gak malu-maluin wkwk 😭`,
         `Aura magelang banget nih hoki lu babu, yapping mulu dari tadi 😂`,
         `Anjay wangi bener ni game, vibes-nya aesthetic abis brotha! 💅`
     ];
@@ -198,27 +193,51 @@ function showInGameBubble(text, duration = 3000) {
     }, duration);
 }
 
-// --- FITUR KASIH MAKAN KUCING (BERI MAKAN 🐟) ---
 function feedCat() {
-    if (!gameState.gameStarted || gameState.isPaused) return;
+    if (!gameState.gameStarted || gameState.isPaused || gameState.isEating) return;
     playSound('click');
+    gameState.isEating = true;
+
+    let fishTargetX = Math.floor(Math.random() * 200) + 50;
 
     let fishEl = document.getElementById('falling-fish');
     if (fishEl) {
+        fishEl.style.left = fishTargetX + 'px';
         fishEl.style.display = 'block';
-        // Reset animasi
         fishEl.style.animation = 'none';
-        fishEl.offsetHeight; 
+        fishEl.offsetHeight;
         fishEl.style.animation = 'fallFishAni 0.8s ease-in forwards';
     }
 
+    if (fishTargetX < gameState.catPosX) {
+        gameState.catDirection = -1;
+    } else {
+        gameState.catDirection = 1;
+    }
+
+    let containerEl = document.getElementById('pixel-cat-container');
+    let bubbleEl = document.getElementById('in-game-bubble');
+    if (containerEl) {
+        containerEl.style.transform = gameState.catDirection === -1 ? 'scaleX(-1)' : 'scaleX(1)';
+        if(bubbleEl) bubbleEl.style.transform = gameState.catDirection === -1 ? 'scaleX(-1)' : 'scaleX(1)';
+    }
+
+    let walkStep = setInterval(() => {
+        if (Math.abs(gameState.catPosX - (fishTargetX - 10)) > 3) {
+            gameState.catPosX += (gameState.catDirection * 2);
+            if(containerEl) containerEl.style.left = gameState.catPosX + 'px';
+        } else {
+            clearInterval(walkStep);
+        }
+    }, 50);
+
     setTimeout(() => {
+        clearInterval(walkStep);
         if(fishEl) fishEl.style.display = 'none';
         playSound('correct');
         showInGameBubble("Makasih yah babu! Nyam nyam enak bgt 🐟✨", 3000);
         showFloatingText("+15 EXP", 200, 250, '#00b894');
         
-        // Tambah EXP & Koin
         let cat = gameState.cats[gameState.currentCat];
         cat.exp += 15;
         gameState.coins += 5;
@@ -228,17 +247,20 @@ function feedCat() {
             cat.level++;
             cat.exp = 0;
             cat.maxExp = Math.floor(cat.maxExp * 1.25);
-            triggerAchievement(`HORE! ${cat.name.split(' ')[0]} Naik ke Level ${cat.level}! 🎉`, 'ach_10_correct'); // Atau level up
+            triggerPopup("🎉 LEVEL UP!", `${cat.name.split(' ')[0]} Naik ke Level ${cat.level}!`, "🐱");
         }
 
         if (gameState.feedCount === 3) {
             unlockAchievement('ach_feed_3');
         }
         updateUI();
-    }, 800);
+        
+        setTimeout(() => {
+            gameState.isEating = false;
+        }, 1500);
+    }, 850);
 }
 
-// --- INTERAKSI KLIK KUCING DI SCREEN ---
 function handleCatInteraction() {
     if(!gameState.gameStarted || gameState.isPaused) return;
     gameState.catPokeCount++;
@@ -258,7 +280,6 @@ function handleCatInteraction() {
     }
 }
 
-// --- SISTEM ACHIEVEMENT TERPADU & LIST ---
 function unlockAchievement(achId) {
     let ach = gameState.achievementsMaster.find(a => a.id === achId);
     if (ach && !ach.unlocked) {
@@ -299,7 +320,6 @@ function renderAchievementList() {
     container.innerHTML = html;
 }
 
-// --- KEMBALI KE LANDING PAGE ---
 function returnToLandingPage() {
     playSound('click');
     closeSettingsModal();
@@ -312,7 +332,6 @@ function returnToLandingPage() {
     if(landing) landing.style.display = 'flex';
 }
 
-// --- EKSPRESI KUCING ---
 function setCatExpression(exp) {
     let faceBox = document.getElementById('cat-face-expression');
     if (!faceBox) return;
@@ -326,7 +345,6 @@ function setCatExpression(exp) {
     }
 }
 
-// --- SETTINGS MODAL & PAUSE ---
 function openSettingsModal() {
     playSound('click');
     document.getElementById('settings-modal').classList.add('active');
@@ -380,7 +398,7 @@ function selectLandingCat(catKey, el) {
     storyBox.innerText = gameState.cats[catKey].story;
 
     let landingCatFace = document.getElementById('landing-cat-face');
-    if(landingCatFace) landingCatFace.className = "pixel-cat-avatar " + catKey;
+    if(landingCatFace) landingCatFace.className = "pixel-cat-avatar waving " + catKey;
     updateLandingBubblePreview();
 }
 
@@ -410,7 +428,6 @@ function startGameFromLanding() {
     }, 1000);
 }
 
-// --- MUSIC PLAYER ---
 function toggleMusicPlayer() {
     let dd = document.getElementById('music-dropdown');
     dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
@@ -446,7 +463,6 @@ function changeMusicCategory() {
     document.getElementById('music-play-btn').style.background = '#d63031';
 }
 
-// --- AUDIO & VIBRATION ---
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 function playSound(type) {
@@ -505,7 +521,6 @@ function showFloatingText(text, x, y, color = '#ffeaa7') {
     setTimeout(() => el.remove(), 700);
 }
 
-// --- SWITCH TAB ---
 function switchTab(tabName) {
     playSound('click');
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -530,7 +545,6 @@ function switchTab(tabName) {
     }
 }
 
-// --- GENERATOR SOAL ---
 function generateQuestion() {
     if (!gameState.gameStarted || gameState.isPaused) return;
     let cat = gameState.cats[gameState.currentCat];
@@ -615,7 +629,7 @@ function renderQuizUI() {
 
     let optHTML = '';
     gameState.currentQuestion.options.forEach(opt => {
-        optHTML += `<button class="math-opt-btn" onclick="checkAnswer(${opt})">${opt}</button>`;
+        optHTML += `<button class="math-opt-btn" onclick="checkAnswer(${opt}, this)">${opt}</button>`;
     });
     document.getElementById('math-options').innerHTML = optHTML;
     document.getElementById('hint-count').innerText = gameState.hints;
@@ -654,7 +668,6 @@ function startTimer() {
     }, 1000);
 }
 
-// --- FITUR HINT ---
 function useHint() {
     if (gameState.hints > 0) {
         gameState.hints--;
@@ -675,7 +688,8 @@ function useHint() {
     }
 }
 
-function checkAnswer(selected) {
+// --- JAWABAN SALAH JADI WARNA MERAH ---
+function checkAnswer(selected, btnElement) {
     if (gameState.isPaused) return;
     clearInterval(gameState.timerInterval);
     document.getElementById('timer-display').classList.remove('warning');
@@ -718,12 +732,17 @@ function checkAnswer(selected) {
 
         gameState.coins += coinReward;
         showFloatingText(`+${coinReward}🪙`, 200, 250, '#55efc4');
+        
+        setTimeout(() => advanceQuizProgression(), 600);
     } else {
         playSound('wrong');
         triggerVibration(300);
         cat.incorrect++;
         gameState.stageMistakes++;
         gameState.streakCount = 0;
+        
+        // Kasih efek merah dan getar ke tombol yang ditekan
+        if(btnElement) btnElement.classList.add('wrong-flash');
 
         if (gameState.stageMistakes >= 3) {
             setCatExpression('sad');
@@ -732,9 +751,11 @@ function checkAnswer(selected) {
             setCatExpression('angry');
             showInGameBubble(`cailah salah, gapapa baru sekali ~ 😉`, 3500);
         }
-    }
 
-    advanceQuizProgression();
+        setTimeout(() => {
+            advanceQuizProgression();
+        }, 800);
+    }
 }
 
 function advanceQuizProgression() {
@@ -765,7 +786,6 @@ function advanceQuizProgression() {
     generateQuestion();
 }
 
-// --- RENDER STAGE MAP ---
 function renderStageMap() {
     let cat = gameState.cats[gameState.currentCat];
     let maxUnlocked = cat.stage;
@@ -840,7 +860,6 @@ function skipStage() {
     }
 }
 
-// --- UPDATE UI ---
 function updateUI() {
     document.getElementById('coin-count').innerText = gameState.coins;
     let cat = gameState.cats[gameState.currentCat];
@@ -968,7 +987,7 @@ function renderShop() {
                     <span class="rarity-tag rarity-${acc.rarity}">${acc.rarity.toUpperCase()}</span>
                 </div>
             </div>
-            <button class="buy-btn" style="pointer-events: none; font-size:9px; padding:4px 8px;">${actionText}</button>
+            <button class="buy-btn">${actionText}</button>
         </div>`;
     }
     document.getElementById('shop-list').innerHTML = shopHTML;

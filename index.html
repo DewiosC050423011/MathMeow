@@ -13,7 +13,9 @@
 <div id="landing-page" class="landing-overlay">
     <div class="landing-card" id="landing-card-main">
         <div class="landing-preview-arena" id="landing-sky-bg">
-            <div class="nature-sun-moon" id="landing-sun-moon">☀️</div>
+            <!-- JAM ALA IPHONE LOCKSCREEN DI LANDING PAGE -->
+            <div class="iphone-lock-clock" id="iphone-lock-clock">15:00</div>
+
             <div class="pixel-cloud c1"></div>
             <div class="pixel-cloud c2"></div>
             <div class="pixel-mountain-back"></div>
@@ -23,7 +25,10 @@
                 <div class="cat-speech-bubble landing-bubble" id="landing-bubble-chat">
                     Hai babu, aku Mochi! Siap nemenin kamu? 🐾
                 </div>
-                <div class="pixel-cat-avatar white" id="landing-cat-face">
+                <div class="pixel-cat-avatar white waving" id="landing-cat-face">
+                    <div class="paw-wave left-paw"></div>
+                    <div class="paw-wave right-paw"></div>
+
                     <div class="cat-ear left"></div><div class="cat-ear right"></div>
                     <div class="cat-whiskers left"></div><div class="cat-whiskers right"></div>
                     <div class="cat-face-8bit normal">
@@ -132,21 +137,18 @@
             <div class="tv-screen-box">
                 <div class="play-arena" id="play-arena">
                     <div class="nature-sky" id="nature-sky">
-                        <div class="nature-sun-moon" id="nature-sun-moon">☀️</div>
                         <div class="pixel-cloud c1"></div>
                         <div class="pixel-cloud c2"></div>
                     </div>
                     <div class="pixel-mountain-back"></div>
                     <div class="pixel-mountain-front"></div>
-                    <div class="pixel-trees">🌲 🌳 🌲 🌳 🌲 🌳</div>
+                    <div class="pixel-trees">🌲 🌳 🌲 🌳 🌲 🌳 🌲 🌳</div>
                     <div class="stage-shadow"></div>
                     
-                    <!-- IKAN JATUH SAAT DIBERI MAKAN -->
                     <div class="falling-fish" id="falling-fish" style="display:none;">🐟</div>
 
-                    <div class="pixel-cat-container" id="pixel-cat-container" style="left: 100px; top: 60px;">
+                    <div class="pixel-cat-container" id="pixel-cat-container" style="left: 140px; top: 60px;">
                         
-                        <!-- BUBBLE CHAT DI DALAM TV SCREEN -->
                         <div class="cat-speech-bubble in-game" id="in-game-bubble">
                             YEY babu jawabnya benar! ✨
                         </div>
@@ -228,7 +230,6 @@
                 <div class="dash-item">⭐ Bintang: <span id="dash-stars">0</span></div>
             </div>
 
-            <!-- TOMBOL AKSI KHUSUS (DITAMBAH TOMBOL KASIH MAKAN) -->
             <div class="quiz-special-actions">
                 <button class="special-action-btn hint" onclick="useHint()">💡 Hint (<span id="hint-count">3</span>)</button>
                 <button class="special-action-btn feed" onclick="feedCat()" style="background:#55efc4; color:#006266;">🐟 Beri Makan</button>
@@ -238,7 +239,7 @@
         </div>
     </div>
 
-    <!-- 2. STAGE SELECT / LEVEL MAP SCREEN -->
+    <!-- 2. STAGE SELECT SCREEN -->
     <div id="screen-stages" class="screen">
         <div class="section-title">🗺️ Peta Stage & Pemilihan Level</div>
         <div class="level-map-container" id="level-map-grid"></div>
@@ -259,7 +260,7 @@
         <div class="shop-list" id="shop-list"></div>
     </div>
 
-    <!-- 5. STATISTICS SCREEN (DENGAN LIST DAFTAR ACHIEVEMENT) -->
+    <!-- 5. STATISTICS SCREEN -->
     <div id="screen-stats" class="screen">
         <div class="section-title">Statistik Pemain (<span id="stats-cat-name">Karakter Aktif</span>)</div>
         <div class="stats-card">
@@ -271,9 +272,7 @@
         </div>
 
         <div class="section-title" style="margin-top: 10px;">🏆 Daftar Pencapaian (Achievement)</div>
-        <div class="achievement-list-box" id="achievement-list-container">
-            <!-- Di-render via JS -->
-        </div>
+        <div class="achievement-list-box" id="achievement-list-container"></div>
     </div>
 </div>
 
