@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MathMeow 8-Bit RPG 🐾⛰️</title>
+    <!-- Google Fonts untuk Tampilan Elegan & Nyaman di Mata -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body id="app-body" class="light-mode">
+
+<!-- 0. LANDING PAGE -->
+<div id="landing-page" class="landing-overlay">
+    <div class="landing-card" id="landing-card-main">
+        <div class="landing-preview-arena" id="landing-sky-bg">
+            <div class="nature-sun-moon" id="landing-sun-moon">☀️</div>
+            <div class="pixel-cloud c1"></div>
+            <div class="pixel-cloud c2"></div>
+            <div class="pixel-mountain-back"></div>
+            <div class="pixel-mountain-front"></div>
+            
+            <div class="landing-cat-real">
+                <div class="pixel-cat-avatar white" id="landing-cat-face">
+                    <div class="cat-ear left"></div><div class="cat-ear right"></div>
+                    <div class="cat-whiskers left"></div><div class="cat-whiskers right"></div>
+                    <div class="cat-face-8bit normal">
+                        <div class="eye left-eye"></div><div class="nose"></div><div class="eye right-eye"></div>
+                        <div class="mouth"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h1 class="landing-title">🐾 MathMeow RPG</h1>
+        <p class="landing-subtitle" id="realtime-status">Memuat Waktu Real-Time...</p>
+        
+        <div class="landing-story" id="landing-story-box">
+            Pilih kucing pendampingmu untuk memulai petualangan kuis matematika di dunia retro!
+        </div>
+
+        <div class="input-group">
+            <label>Beri Nama Kucingmu:</label>
+            <input type="text" id="player-cat-name-input" placeholder="Contoh: Mochi" maxlength="12" value="Mochi">
+        </div>
+
+        <div class="input-group">
+            <label>Panggil Player Sebagai:</label>
+            <select id="landing-parent-role" class="landing-select">
+                <option value="Mom">👩‍🦰 Mom (Bunda)</option>
+                <option value="Dad">👨‍🦰 Dad (Ayah)</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Pilih Tingkat Kesulitan:</label>
+            <select id="landing-difficulty" class="landing-select">
+                <option value="easy">🟢 Mudah (Dasar & Penjumlahan)</option>
+                <option value="medium" selected>🟡 Sedang (Campuran & Aljabar)</option>
+                <option value="hard">🔴 Sulit (Pangkat, Akar & Kompleks)</option>
+            </select>
+        </div>
+
+        <div class="landing-cat-selector">
+            <div class="cat-choice-box active" onclick="selectLandingCat('white', this)">
+                <div style="font-size:22px;">🐱</div>
+                <strong>Milo</strong>
+            </div>
+            <div class="cat-choice-box" onclick="selectLandingCat('black', this)">
+                <div style="font-size:22px;">🐈‍⬛</div>
+                <strong>Shadow</strong>
+            </div>
+            <div class="cat-choice-box" onclick="selectLandingCat('calico', this)">
+                <div style="font-size:22px;">🐈</div>
+                <strong>Moci</strong>
+            </div>
+        </div>
+
+        <button class="start-game-btn" onclick="startGameFromLanding()">Mulai Petualangan ✨</button>
+    </div>
+</div>
+
+<div class="game-container">
+    <!-- Header -->
+    <header>
+        <div class="logo-title" id="header-game-title">👾 MathMeow</div>
+        <div class="stats">
+            <div class="stat-badge">🪙 <span id="coin-count">0</span></div>
+            <div class="stat-badge" onclick="toggleMusicPlayer()" style="cursor:pointer;" title="Pemutar Musik">🎵</div>
+            <div class="stat-badge" onclick="openSettingsModal()" style="cursor:pointer;" title="Pengaturan">⚙️</div>
+        </div>
+    </header>
+
+    <!-- MUSIC PLAYER WIDGET -->
+    <div class="music-player-dropdown" id="music-dropdown" style="display:none;">
+        <div style="font-size:10px; font-weight:900; margin-bottom:4px;">🎧 Pilih Musik Latar:</div>
+        <select id="music-category-select" onchange="changeMusicCategory()">
+            <option value="cozy">1. Cozy Lo-Fi Retro</option>
+            <option value="adventure">2. Forest Adventure</option>
+            <option value="chill">3. Sleepy Afternoon</option>
+            <option value="arcade">4. 8-Bit Arcade</option>
+            <option value="piano">5. Melodic Piano</option>
+        </select>
+        <div style="display:flex; gap:6px; margin-top:6px;">
+            <button class="modal-btn buy" style="font-size:10px; padding:4px;" onclick="togglePlayMusic()" id="music-play-btn">▶ Play</button>
+            <button class="modal-btn cancel" style="font-size:10px; padding:4px;" onclick="toggleMusicPlayer()">Tutup</button>
+        </div>
+        <audio id="bgm-audio" loop src="https://www.bensound.com/bensound-music/bensound-cute.mp3"></audio>
+    </div>
+
+    <!-- Nav Tabs (Tanpa Setting karena sudah di Icon Header) -->
+    <div class="nav-tabs">
+        <button class="nav-btn active" onclick="switchTab('quiz')">🔢 Kuis</button>
+        <button class="nav-btn" onclick="switchTab('stages')">🗺️ Peta Stage</button>
+        <button class="nav-btn" onclick="switchTab('wardrobe')">🎀 Lemari</button>
+        <button class="nav-btn" onclick="switchTab('shop')">🛒 Toko</button>
+        <button class="nav-btn" onclick="switchTab('stats')">📊 Statistik</button>
+    </div>
+
+    <!-- 1. QUIZ & EXPLORATION SCREEN -->
+    <div id="screen-quiz" class="screen active">
+        
+        <!-- TV FRAME RETRO CONTAINER -->
+        <div class="tv-frame-container">
+            <div class="tv-antennae">
+                <div class="antenna left"></div>
+                <div class="antenna right"></div>
+            </div>
+            
+            <div class="tv-screen-box">
+                <div class="play-arena" id="play-arena">
+                    <div class="nature-sky" id="nature-sky">
+                        <div class="nature-sun-moon" id="nature-sun-moon">☀️</div>
+                        <div class="pixel-cloud c1"></div>
+                        <div class="pixel-cloud c2"></div>
+                    </div>
+                    <div class="pixel-mountain-back"></div>
+                    <div class="pixel-mountain-front"></div>
+                    <div class="pixel-trees">🌲 🌳 🌲 🌳 🌲 🌳</div>
+                    <div class="stage-shadow"></div>
+                    
+                    <div class="pixel-cat-container" id="pixel-cat-container" style="left: 120px; top: 45px;">
+                        <div class="cat-aura-effect" id="cat-aura-effect">
+                            <div class="aura-particle p1" id="ap-1">🌸</div>
+                            <div class="aura-particle p2" id="ap-2">🌸</div>
+                            <div class="aura-particle p3" id="ap-3">🌸</div>
+                        </div>
+
+                        <div class="pixel-cat-avatar" id="pixel-cat">
+                            <div class="cat-tail" id="cat-tail"></div>
+                            <div class="cat-ear left"></div>
+                            <div class="cat-ear right"></div>
+                            <div class="cat-whiskers left"></div>
+                            <div class="cat-whiskers right"></div>
+                            
+                            <div class="acc-slot head" id="acc-head"></div>
+                            
+                            <!-- WAJAH & EKSPRESI DI DALAM TV SCREEN -->
+                            <div class="cat-face-8bit normal" id="cat-face-expression">
+                                <div class="eye left-eye"></div>
+                                <div class="nose"></div>
+                                <div class="eye right-eye"></div>
+                                <div class="mouth" id="cat-mouth"></div>
+                                <div class="tear-drop" id="cat-tear">💧</div>
+                            </div>
+
+                            <div class="acc-slot eyes" id="acc-eyes"></div>
+                            <div class="acc-slot body" id="acc-body"></div>
+
+                            <div class="cat-limbs">
+                                <div class="limb leg-l"></div>
+                                <div class="limb leg-r"></div>
+                                <div class="limb arm-l"></div>
+                                <div class="limb arm-r"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="active-buff-badge" id="active-buff-badge">✨ Buff Aktif</div>
+                    <!-- PANGGILAN MOM / DAD DI DALAM TV SCREEN -->
+                    <div class="cat-name-banner" id="main-cat-name">Mochi (Lv.1) • Mom</div>
+                </div>
+            </div>
+
+            <!-- Panel Tombol TV & Info Bar Kucing -->
+            <div class="tv-control-panel">
+                <div class="tv-knob" onclick="togglePauseGame()" title="Pause / Play Game" style="cursor:pointer;"></div>
+                
+                <div class="tv-cat-status-bar">
+                    <div class="status-info-row">
+                        <span id="tv-cat-lv">Lv. 1</span>
+                        <span id="tv-exp-text">EXP: 0/100</span>
+                    </div>
+                    <div class="mini-hp-bar-container">
+                        <div class="mini-hp-bar-fill" id="tv-exp-bar" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <div class="tv-power-light" id="tv-power-light"></div>
+            </div>
+        </div>
+
+        <!-- Math Quiz Arena Container -->
+        <div class="quiz-container">
+            <div class="quiz-header">
+                <span id="stage-info">Stage 1 (Soal 1/3)</span>
+                <div style="display:flex; gap:6px; align-items:center;">
+                    <button class="action-skip-btn" style="padding:2px 6px; font-size:8px;" onclick="togglePauseGame()" id="pause-btn">⏸️ Pause</button>
+                    <span id="timer-display" class="timer-box">⏱️ 30s</span>
+                </div>
+            </div>
+            
+            <div class="math-question-box" id="math-question">5 + 3 = ?</div>
+            <div class="math-options-grid" id="math-options"></div>
+            
+            <div class="bottom-dash-panel">
+                <div class="dash-item">🎯 Akurasi: <span id="dash-accuracy">100%</span></div>
+                <div class="dash-item">🔥 Streak: <span id="dash-streak">0</span></div>
+                <div class="dash-item">⭐ Bintang: <span id="dash-stars">0</span></div>
+            </div>
+
+            <!-- TOMBOL AKSI KHUSUS (DIJAUHKAN DARI OPSI JAWABAN & TERPISAH) -->
+            <div class="quiz-special-actions">
+                <button class="special-action-btn hint" onclick="useHint()">💡 Hint (<span id="hint-count">3</span>)</button>
+                <button class="special-action-btn skip-q" onclick="skipQuestion()">⏭️ Skip Soal (15🪙)</button>
+                <button class="special-action-btn skip-s" onclick="skipStage()">⏩ Skip Stage (30🪙)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. STAGE SELECT / LEVEL MAP SCREEN -->
+    <div id="screen-stages" class="screen">
+        <div class="section-title">🗺️ Peta Stage & Pemilihan Level</div>
+        <div class="level-map-container" id="level-map-grid"></div>
+    </div>
+
+    <!-- 3. WARDROBE SCREEN -->
+    <div id="screen-wardrobe" class="screen">
+        <div class="section-title">Pilih Karakter Kucing 8-Bit</div>
+        <div class="grid-3" id="cat-selector"></div>
+
+        <div class="section-title">Lemari Koleksi (Aksesori & Item Stage Bonus)</div>
+        <div class="grid-3" id="accessory-grid"></div>
+    </div>
+
+    <!-- 4. SHOP SCREEN -->
+    <div id="screen-shop" class="screen">
+        <div class="section-title">Toko Retro & Booster EXP Kucing</div>
+        <div class="shop-list" id="shop-list"></div>
+    </div>
+
+    <!-- 5. STATISTICS SCREEN -->
+    <div id="screen-stats" class="screen">
+        <div class="section-title">Statistik Pemain (<span id="stats-cat-name">Karakter Aktif</span>)</div>
+        <div class="stats-card">
+            <div class="stat-row"><span>Level Kucing:</span> <strong id="stat-level" style="color:#0984e3;">1 (Max 30)</strong></div>
+            <div class="stat-row"><span>Stage Saat Ini:</span> <strong id="stat-stage">1</strong></div>
+            <div class="stat-row"><span>Jawaban Benar:</span> <strong id="stat-correct" style="color:#00b894;">0</strong></div>
+            <div class="stat-row"><span>Jawaban Salah:</span> <strong id="stat-incorrect" style="color:#ff7675;">0</strong></div>
+            <div class="stat-row"><span>Total Koin Didapat:</span> <strong id="stat-coins">0</strong></div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL UPGRADE ITEM -->
+<div class="modal-overlay" id="item-modal">
+    <div class="modal-box">
+        <div class="modal-icon" id="modal-icon">🎀</div>
+        <h3 id="modal-title">Nama Item</h3>
+        <div class="modal-rarity" id="modal-rarity">COMMON</div>
+        <p class="modal-desc" id="modal-desc">Statistik dan efek item.</p>
+        <div class="modal-price" id="modal-price">🪙 0 Koin</div>
+        <div class="modal-buttons">
+            <button class="modal-btn cancel" onclick="closeModal()">Tutup</button>
+            <button class="modal-btn buy" id="modal-buy-btn" onclick="confirmPurchase()">Beli Item</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL SETTINGS (DIBUAT POP-UP ELEGAN) -->
+<div class="modal-overlay" id="settings-modal">
+    <div class="modal-box">
+        <div style="font-size:28px; margin-bottom:4px;">⚙️</div>
+        <h3>PENGATURAN GAME</h3>
+        <div class="stats-card" style="margin: 12px 0; gap: 10px; border:none; box-shadow:none; padding:0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 900;">
+                <span>Kesulitan:</span>
+                <select id="settings-difficulty" onchange="changeDifficultySetting(this.value)" style="padding: 4px; font-family:'Nunito'; font-weight:900; font-size:10px; border:2px solid #2d3436; border-radius:6px;">
+                    <option value="easy">Mudah</option>
+                    <option value="medium" selected>Sedang</option>
+                    <option value="hard">Sulit</option>
+                </select>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 900;">
+                <span>Efek Getar HP:</span>
+                <input type="checkbox" id="vibrate-toggle" checked style="width: 16px; height: 16px; accent-color: #ff7675; cursor: pointer;">
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 900;">
+                <span>Mode Tampilan:</span>
+                <button class="modal-btn buy" style="padding: 4px 8px; font-size: 9px;" onclick="toggleThemeMode()" id="theme-mode-btn">🌙 Dark Mode</button>
+            </div>
+        </div>
+        <button class="modal-btn cancel" onclick="closeSettingsModal()">Tutup</button>
+    </div>
+</div>
+
+<!-- POP-UP PAUSE MENU -->
+<div class="modal-overlay" id="pause-modal">
+    <div class="modal-box">
+        <div style="font-size:36px; margin-bottom:6px;">⏸️</div>
+        <h3>GAME DI-PAUSE</h3>
+        <p style="font-size:11px; margin:10px 0;">Waktu kuis sedang dijeda. Istirahat sejenak atau lanjutkan kembali!</p>
+        <div class="modal-buttons">
+            <button class="modal-btn cancel" onclick="switchTab('stages'); togglePauseGame();">Peta Stage</button>
+            <button class="modal-btn buy" onclick="togglePauseGame()">Lanjutkan</button>
+        </div>
+    </div>
+</div>
+
+<!-- ACHIEVEMENT POPUP -->
+<div class="achievement-popup" id="achievement-popup">
+    <div class="ach-icon">🏆</div>
+    <div>
+        <div style="font-size: 11px; font-weight: 900; color: #ffeaa7;">ACHIEVEMENT UNLOCKED!</div>
+        <div id="ach-text" style="font-size: 10px; color: white;">20 Jawaban Benar Tercapai!</div>
+    </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>
